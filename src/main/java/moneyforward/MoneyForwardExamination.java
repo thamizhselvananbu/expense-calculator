@@ -1,6 +1,9 @@
 package moneyforward;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.CsvToBeanBuilder;
+import model.Transactions;
 import model.WalletCsv;
 import model.WalletDate;
 import model.WalletJson;
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
  * Date: 2023/12/17/ 17:30 JST
  */
 public class MoneyForwardExamination {
+
+    public static DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
     /**
      * Method to load data from csv file based on headers row
@@ -46,8 +51,7 @@ public class MoneyForwardExamination {
     static Map<Integer, List<WalletDate>> walletCsvToWalletDateMapper(List<WalletCsv> csvList) {
         /**create arraylist to store date formatted csv records **/
         List<WalletDate> walletDateList = new ArrayList<>();
-        /** pattern for date **/
-        var df = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
         /**Map each csv row into walletdate type to process data**/
         for (WalletCsv csv : csvList) {
             WalletDate walletDate = new WalletDate();
@@ -86,9 +90,10 @@ public class MoneyForwardExamination {
      * @param walletDateByYear passing wallet details by year
      * @return
      */
-    static void mapWalletDateByYearMonthResult(Map<Integer, List<WalletDate>> walletDateByYear) {
+    static void mapWalletDateByYearMonthResult(Map<Integer, List<WalletDate>> walletDateByYear) throws JsonProcessingException {
 
         Map<Integer, List<Integer>> yearBasedUniqueMonth = new HashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
 
         for (var entry : walletDateByYear.entrySet()) {
             var walletDateList = entry.getValue();
@@ -126,9 +131,16 @@ public class MoneyForwardExamination {
                         .filter(deposit -> deposit < 0)
                         .reduce(0, Integer::sum);
 
-                var walletDateByMonth = walletDateByYear.get(eachYear)
+                var transactionsDateByMonth = walletDateByYear.get(eachYear)
                         .stream()
                         .filter(walletDate -> walletDate.getDate().getMonth().getValue() == eachYearUniqueMonth)
+                        .map(walletDate -> {
+                            Transactions tran = new Transactions();
+                            tran.setAmount(walletDate.getDeposit());
+                            tran.setContent(walletDate.getContent());
+                            tran.setDate(String.valueOf(walletDate.getDate().format(df)));
+                            return tran;
+                        })
                         .collect(Collectors.toList());
 
                 String period = String.valueOf(eachYear).concat("/").concat(String.valueOf(eachYearUniqueMonth));
@@ -137,7 +149,10 @@ public class MoneyForwardExamination {
                 walletJson.setPeriod(period);
                 walletJson.setTotalIncome(totalIncome);
                 walletJson.setTotalExpenditure(totalExpenditure);
-                walletJson.setWalletDates(walletDateByMonth);
+                walletJson.setWalletDates(transactionsDateByMonth);
+
+                String writeWalletJson = objectMapper.writeValueAsString(walletJson);
+                System.out.println(writeWalletJson);
 
             }
 

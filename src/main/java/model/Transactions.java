@@ -8,6 +8,10 @@ public class Transactions {
 
     private String content;
 
+    public Transactions() {
+
+    }
+
     public Transactions(String date, int amount, String content) {
         this.date = date;
         this.amount = amount;

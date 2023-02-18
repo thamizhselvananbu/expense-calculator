@@ -1,5 +1,9 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 
 public class WalletDate {
@@ -7,7 +11,7 @@ public class WalletDate {
     private LocalDate date;
 
     private int deposit;
-
+    
     private String content;
 
     public LocalDate getDate() {

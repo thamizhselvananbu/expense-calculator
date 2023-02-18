@@ -1,26 +1,36 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import java.util.List;
 
 public class WalletJson {
 
-    private String date;
+    private String period;
 
+    @JsonProperty("total_income")
     private int totalIncome;
 
+    @JsonProperty("total_expenditure")
     private int totalExpenditure;
 
-    private List<Transactions> transactions;
+    @JsonProperty("transactions")
+    private List<Transactions> walletDates;
 
-    public WalletJson(String date, int totalIncome, int totalExpenditure, List<Transactions> transactions) {
-        this.date = date;
-        this.totalIncome = totalIncome;
-        this.totalExpenditure = totalExpenditure;
-        this.transactions = transactions;
+    public WalletJson() {
+
     }
 
-    public String getDate() {
-        return date;
+    public WalletJson(String period, int totalIncome, int totalExpenditure, List<Transactions> walletDates) {
+        this.period = period;
+        this.totalIncome = totalIncome;
+        this.totalExpenditure = totalExpenditure;
+        this.walletDates = walletDates;
+    }
+
+    public String getPeriod() {
+        return period;
     }
 
     public int getTotalIncome() {
@@ -31,12 +41,12 @@ public class WalletJson {
         return totalExpenditure;
     }
 
-    public List<Transactions> getTransactions() {
-        return transactions;
+    public List<Transactions> getWalletDates() {
+        return walletDates;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setPeriod(String period) {
+        this.period = period;
     }
 
     public void setTotalIncome(int totalIncome) {
@@ -47,17 +57,17 @@ public class WalletJson {
         this.totalExpenditure = totalExpenditure;
     }
 
-    public void setTransactions(List<Transactions> transactions) {
-        this.transactions = transactions;
+    public void setWalletDates(List<Transactions> walletDates) {
+        this.walletDates = walletDates;
     }
 
     @Override
     public String toString() {
         return "WalletJson{" +
-                "date='" + date + '\'' +
+                "period='" + period + '\'' +
                 ", totalIncome=" + totalIncome +
                 ", totalExpenditure=" + totalExpenditure +
-                ", transactions=" + transactions +
+                ", walletDates=" + walletDates +
                 '}';
     }
 }
