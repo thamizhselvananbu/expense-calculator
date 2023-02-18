@@ -99,7 +99,7 @@ public class MoneyForwardExamination {
             var walletDateList = entry.getValue();
             /**
              * Filter wallet date by month
-             * store it in map with yeas as key
+             * store it in map with years as key
              * unique month for a yeas as value
              */
             var months = walletDateList.stream()
@@ -109,6 +109,12 @@ public class MoneyForwardExamination {
             yearBasedUniqueMonth.put(entry.getKey(), months);
         }
 
+        /**
+         * Iterate over each month based on years
+         * find totalIncome for a month
+         * find totalExpenditure for a month
+         * store it in WalletJson class
+         */
         for (var eachUniqueMonth : yearBasedUniqueMonth.entrySet()) {
             var uniqueMonthsList = eachUniqueMonth.getValue();
             var eachYear = eachUniqueMonth.getKey();
@@ -155,10 +161,7 @@ public class MoneyForwardExamination {
                 System.out.println(writeWalletJson);
 
             }
-
-
         }
-
     }
 
     /**
@@ -168,7 +171,7 @@ public class MoneyForwardExamination {
      */
     public static void main(String[] args) {
 
-        String filePath = "/Users/anbuthamizhselvan/Desktop/test_wallet.csv";
+        String filePath = args[0];
 
         try {
             /**
