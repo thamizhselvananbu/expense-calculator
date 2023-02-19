@@ -171,29 +171,34 @@ public class MoneyForwardExamination {
      */
     public static void main(String[] args) {
 
-        String filePath = args[0];
+        if (!args[0].isBlank()) {
+            try {
+                String filePath = args[0];
+                /**
+                 * load csv file from a path
+                 * convert csv file into java object
+                 */
+                var walletCsvList = csvToWalletCsv(filePath);
 
-        try {
-            /**
-             * load csv file from a path
-             * convert csv file into java object
-             */
-            var walletCsvList = csvToWalletCsv(filePath);
+                /**
+                 * map date in string format to LocalDate format
+                 * divide the data by years
+                 */
+                var yearBasedWallet = walletCsvToWalletDateMapper(walletCsvList);
 
-            /**
-             * map date in string format to LocalDate format
-             * divide the data by years
-             */
-            var yearBasedWallet = walletCsvToWalletDateMapper(walletCsvList);
+                /**
+                 * Further divide the year based data into months
+                 * finally print the out json
+                 */
+                mapWalletDateByYearMonthResult(yearBasedWallet);
 
-            /**
-             * Further divide the year based data into months
-             * finally print the out json
-             */
-            mapWalletDateByYearMonthResult(yearBasedWallet);
-
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            } catch (Exception e) {
+                System.err.println("Internal error:" + e.getMessage());
+            }
+        } else {
+            System.err.println("Please pass the File path in command line arguments!");
         }
     }
 }
