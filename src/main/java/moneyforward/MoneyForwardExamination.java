@@ -16,7 +16,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Copyright All Rights reserved Money Forward
  * author: thamizh
  * Date: 2023/12/17/ 17:30 JST
  */
