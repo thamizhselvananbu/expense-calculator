@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 public class MoneyForwardExamination {
 
-    public static DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+    private static DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
     /**
      * Method to load data from csv file based on headers row
@@ -32,10 +32,14 @@ public class MoneyForwardExamination {
      * @throws IOException due to file processing or missing
      */
     static List<WalletCsv> csvToWalletCsv(String path) throws IOException {
-        List<WalletCsv> walletCsvList = new CsvToBeanBuilder(new FileReader(path))
-                .withType(WalletCsv.class)
-                .build()
-                .parse();
+        List<WalletCsv> walletCsvList;
+        try (FileReader fr = new FileReader(path)) {
+            walletCsvList = new CsvToBeanBuilder<WalletCsv>(fr)
+                    .withType(WalletCsv.class)
+                    .build()
+                    .parse();
+        }
+
         return walletCsvList;
     }
 
@@ -170,8 +174,8 @@ public class MoneyForwardExamination {
      */
     public static void main(String[] args) {
 
-        if (!args[0].isBlank()) {
-            try {
+        try {
+            if (!args[0].isBlank()) {
                 String filePath = args[0];
                 /**
                  * load csv file from a path
@@ -190,14 +194,14 @@ public class MoneyForwardExamination {
                  * finally print the out json
                  */
                 mapWalletDateByYearMonthResult(yearBasedWallet);
-
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-            } catch (Exception e) {
-                System.err.println("Internal error:" + e.getMessage());
+            } else {
+                System.err.println("Please pass the File path in command line arguments!");
             }
-        } else {
-            System.err.println("Please pass the File path in command line arguments!");
+
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Internal error:" + e.getMessage());
         }
     }
 }
