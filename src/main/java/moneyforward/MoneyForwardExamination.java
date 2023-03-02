@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 public class MoneyForwardExamination {
 
-    private static DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
     /**
      * Method to load data from csv file based on headers row
@@ -32,7 +32,7 @@ public class MoneyForwardExamination {
      * @throws IOException due to file processing or missing
      */
     static List<WalletCsv> csvToWalletCsv(String path) throws IOException {
-        List<WalletCsv> walletCsvList;
+        final List<WalletCsv> walletCsvList;
         try (FileReader fr = new FileReader(path)) {
             walletCsvList = new CsvToBeanBuilder<WalletCsv>(fr)
                     .withType(WalletCsv.class)
@@ -51,15 +51,15 @@ public class MoneyForwardExamination {
      * @param csvList to map from String type date to LocalDate type for process
      * @return return yearly based wallet details
      */
-    static Map<Integer, List<WalletDate>> walletCsvToWalletDateMapper(List<WalletCsv> csvList) {
+    static Map<Integer, List<WalletDate>> walletCsvToWalletDateMapper(final List<WalletCsv> csvList) {
         /**create arraylist to store date formatted csv records **/
-        List<WalletDate> walletDateList = new ArrayList<>();
+        final List<WalletDate> walletDateList = new ArrayList<>();
 
         /**Map each csv row into walletdate type to process data**/
         for (WalletCsv csv : csvList) {
             WalletDate walletDate = new WalletDate();
             /** parsing date **/
-            walletDate.setDate(LocalDate.parse(csv.getDate(), df));
+            walletDate.setDate(LocalDate.parse(csv.getDate(), DATE_FORMATTER));
             walletDate.setDeposit(csv.getDeposit());
             walletDate.setContent(csv.getContent());
 
@@ -67,7 +67,7 @@ public class MoneyForwardExamination {
         }
 
         /** create map to store wallet data by years **/
-        Map<Integer, List<WalletDate>> walletDateMap = new HashMap<>();
+        final Map<Integer, List<WalletDate>> walletDateMap = new HashMap<>();
 
         /**
          * divide csv data based on year
@@ -93,9 +93,9 @@ public class MoneyForwardExamination {
      * @param walletDateByYear passing wallet details by year
      * @return
      */
-    static void mapWalletDateByYearMonthResult(Map<Integer, List<WalletDate>> walletDateByYear) throws JsonProcessingException {
+    static void mapWalletDateByYearMonthResult(final Map<Integer, List<WalletDate>> walletDateByYear) throws JsonProcessingException {
 
-        Map<Integer, List<Integer>> yearBasedUniqueMonth = new HashMap<>();
+        final Map<Integer, List<Integer>> yearBasedUniqueMonth = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
 
         for (var entry : walletDateByYear.entrySet()) {
@@ -147,7 +147,7 @@ public class MoneyForwardExamination {
                             Transactions tran = new Transactions();
                             tran.setAmount(walletDate.getDeposit());
                             tran.setContent(walletDate.getContent());
-                            tran.setDate(String.valueOf(walletDate.getDate().format(df)));
+                            tran.setDate(String.valueOf(walletDate.getDate().format(DATE_FORMATTER)));
                             return tran;
                         })
                         .collect(Collectors.toList());
